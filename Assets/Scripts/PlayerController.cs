@@ -12,13 +12,11 @@ using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private GameObject testCube;
-
     // 仮UI
     [SerializeField] private TextMeshProUGUI heightText;
 
     // 右のコントローラーのTransform
-    [SerializeField] private Transform rightControllerTransform;
+    //[SerializeField] private Transform rightControllerTransform;
 
     // PlayerのRigidbody
     private Rigidbody playerRigidbody;
@@ -30,6 +28,10 @@ public class PlayerController : MonoBehaviour
     private int currentCheckPointIndex = 0;
 
     [SerializeField] private WindController windController;
+    [SerializeField] private float pullTime;
+    [SerializeField] private float pullPower;
+    [SerializeField] private Vector3 pullDirection;
+    private bool isPulling = false;
 
     // Start is called before the first frame update
     private void Start()
@@ -42,38 +44,23 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         heightText.text = this.transform.position.y.ToString();
-        // コントローラーの角度を取得
-        Quaternion rightControllerRotation = rightControllerTransform.rotation;
-
-        Vector3 rightControllerTilt = (rightControllerRotation * Vector3.forward).normalized;
-        //Debug.Log("回転" + rightControllerRotation.eulerAngles);
-        Debug.Log("傾き" + rightControllerTilt);
-        Debug.DrawLine(new Vector3(0, 15, 2), new Vector3(0, 15, 2) + rightControllerTilt * 3, Color.red);
-        bool existNextCheckPoint = windController.currentWindDirection(currentCheckPointIndex, this.transform);
-        float similarity;
-        if (existNextCheckPoint)
+        // キーを押したら前方向にふわりと浮く
+        if (Input.GetKeyDown(KeyCode.Space) && isPulling == false)
         {
-            similarity = Vector3.Dot(rightControllerTilt, windController.windDirection);
+            StartCoroutine(PullUmbrella());
         }
-        else
+        if (isPulling == false)
         {
-            similarity = -1;
-        }
-        // 類似度が0.7よりおおきいとき
-        Debug.Log(similarity);
-        if (similarity >= 0.7)
-        {
-            //チェックポイントに向かって風が吹く
-            Vector3 currentWind = windController.windDirection;
-            playerRigidbody.velocity = currentWind;
-        }
-        // 類似していなければ
-        else
-        {
-            // おちていく
             playerRigidbody.velocity = gravityDirection;
         }
-        //Debug.Log(rightControllerTransform.position);
+    }
+
+    private IEnumerator PullUmbrella()
+    {
+        playerRigidbody.velocity = pullDirection * pullPower;
+        isPulling = true;
+        yield return new WaitForSeconds(pullTime);
+        isPulling = false;
     }
 
     private void OnTriggerEnter(Collider other)
