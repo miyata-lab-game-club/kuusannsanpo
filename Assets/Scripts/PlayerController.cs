@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
     {
         heightText.text = this.transform.position.y.ToString();
         // ƒL[‚ğ‰Ÿ‚µ‚½‚ç‘O•ûŒü‚É‚Ó‚í‚è‚Æ•‚‚­
-        if (Input.GetKeyDown(KeyCode.Space) && isPulling == false)
+        if (OVRInput.GetDown(OVRInput.RawButton.Y) && isPulling == false)
         {
             StartCoroutine(PullUmbrella());
         }
