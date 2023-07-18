@@ -1,12 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Ports;
 using System.Threading;
 using UnityEngine;
 
 public class ReceiveFromArduino : MonoBehaviour
 {
+    public GameObject cube; // 傾きを反映するキューブの参照
+    public RotateCube rotateCube; // RotateCubeへの参照を追加
     private Queue outputQueue;
     private SerialPort serialPort;
     private Thread thread;
@@ -31,25 +34,49 @@ public class ReceiveFromArduino : MonoBehaviour
             try
             {
                 string message = serialPort.ReadLine();
-                Debug.Log(message);
-                if (message != null)
+                string[] parts = message.Split(',');
+                UnityEngine.Debug.Log(message);
+                if (parts.Length == 4)
                 {
-                    outputQueue.Enqueue(message);
+                    outputQueue.Enqueue(parts);
                 }
             }
-            catch (TimeoutException) { }
+            catch (System.Exception e)
+            {
+                //エラーハンドリング。必要に応じてここにコードを書いてください。
+            }
         }
     }
-
     private void Update()
     {
         while (outputQueue.Count != 0)
         {
-            string message = (string)outputQueue.Dequeue();
+            string[] parts = (string[])outputQueue.Dequeue();
 
-            if (message.Trim() == "1")
+            int mode = int.Parse(parts[3]);
+
+            if (mode == 0)
             {
-                Debug.ClearDeveloperConsole(); // Clears the console when the button is pressed
+                UnityEngine.Debug.Log("3");
+                // Gyro mode
+                                               // 何か適切な処理
+
+            }
+            else if (mode == 1)
+            {
+                UnityEngine.Debug.Log("2");// Accelerometer mode
+                                               // 何か適切な処理
+            }
+            else if (mode == 2)
+            {
+                UnityEngine.Debug.Log("1");
+                // AHRS mode
+                float x = float.Parse(parts[0]);
+                float y = float.Parse(parts[1]);
+                float z = float.Parse(parts[2]);
+
+                // 傾きをRotateCubeに反映します。
+                rotateCube.SetRotation(x, y, z);
             }
         }
     }
