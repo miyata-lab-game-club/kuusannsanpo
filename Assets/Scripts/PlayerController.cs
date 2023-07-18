@@ -12,16 +12,8 @@ using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private GameObject testCube;
-
-    // 仮UI
-    [SerializeField] private TextMeshProUGUI heightText;
-
     // 右のコントローラーのTransform
     [SerializeField] private Transform rightControllerTransform;
-
-    // PlayerのRigidbody
-    private Rigidbody playerRigidbody;
 
     // 落ちていく速度
     [SerializeField] private Vector3 gravityDirection;
@@ -29,19 +21,17 @@ public class PlayerController : MonoBehaviour
     // 今いるチェックポイント
     private int currentCheckPointIndex = 0;
 
-    [SerializeField] private WindController windController;
+    [SerializeField] private WindManager windController;
 
     // Start is called before the first frame update
     private void Start()
     {
-        heightText.text = this.transform.position.y.ToString();
-        playerRigidbody = this.GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     private void Update()
     {
-        heightText.text = this.transform.position.y.ToString();
+        /*
         // コントローラーの角度を取得
         Quaternion rightControllerRotation = rightControllerTransform.rotation;
 
@@ -74,6 +64,7 @@ public class PlayerController : MonoBehaviour
             playerRigidbody.velocity = gravityDirection;
         }
         //Debug.Log(rightControllerTransform.position);
+        */
     }
 
     private void OnTriggerEnter(Collider other)
