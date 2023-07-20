@@ -9,14 +9,14 @@ public class WindManager : MonoBehaviour
     [SerializeField] private GameObject player;
     [SerializeField] private float speed;
 
-    // Player‚ÌRigidbody
+    // Playerã®Rigidbody
     private Rigidbody playerRigidbody;
 
     private bool up;
     private bool boost;
-    private bool twiceBoost;// ‘¬“x“ñ”{
+    private bool twiceBoost;// é€Ÿåº¦äºŒå€
 
-    // —‚¿‚Ä‚¢‚­‘¬“x
+    // è½ã¡ã¦ã„ãé€Ÿåº¦
     [SerializeField] private Vector3 gravityDirection;
 
     [SerializeField] private Transform rightControllerTransform;
@@ -26,7 +26,7 @@ public class WindManager : MonoBehaviour
     private Vector3 currentWind;
     private int currentWindIndex = 0;
 
-    //@ãA–kA–k“ŒA“ŒA“ì“ŒA“ìA“ì¼A¼A–k¼
+    //ã€€ä¸Šã€åŒ—ã€åŒ—æ±ã€æ±ã€å—æ±ã€å—ã€å—è¥¿ã€è¥¿ã€åŒ—è¥¿
     public Vector3[] windDirection = new Vector3[]
     {new Vector3(0,1,0), new Vector3(0, 1, 1),new Vector3(1, 1, 1),new Vector3(1, 1, 0),
      new Vector3(1,1,-1), new Vector3(0, 1, -1),new Vector3(-1, 1, -1),new Vector3(-1, 1, 0),
@@ -39,7 +39,7 @@ public class WindManager : MonoBehaviour
      new Vector3(-1, 0, 1)
 };
 
-    // ‰¼UI
+    // ä»®UI
     [SerializeField] private TextMeshProUGUI heightText;
 
     [SerializeField] private TextMeshProUGUI timerText;
@@ -58,11 +58,11 @@ public class WindManager : MonoBehaviour
 
     private void Update()
     {
-        // ‰EƒRƒ“ƒgƒ[ƒ‰[‚ÌŒX‚«
+        // å³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®å‚¾ã
         Quaternion rightControllerRotation = rightControllerTransform.rotation;
-        // ‰EƒRƒ“ƒgƒ[ƒ‰[‚ÌŒX‚«‚ğƒxƒNƒgƒ‹‚É‚·‚é
+        // å³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®å‚¾ãã‚’ãƒ™ã‚¯ãƒˆãƒ«ã«ã™ã‚‹
         rightControllerTilt = (rightControllerRotation * Vector3.forward).normalized;
-        // xz•½–Ê‚É–ß‚·
+        // xzå¹³é¢ã«æˆ»ã™
         rightControllerTilt.y = 0;
 
         heightText.text = this.transform.position.y.ToString();
@@ -94,31 +94,31 @@ public class WindManager : MonoBehaviour
 
                 float similarity;
                 similarity = Vector3.Dot(rightControllerTilt.normalized, windXZDirection[currentWindIndex].normalized);
-                // —Ş—“x‚ª0.7‚æ‚è‚¨‚¨‚«‚¢‚Æ‚«
+                // é¡ä¼¼åº¦ãŒ0.7ã‚ˆã‚ŠãŠãŠãã„ã¨ã
                 //Debug.Log(similarity);
                 similarityText.text = similarity.ToString();
                 if (similarity >= 0.8)
                 {
                     playerRigidbody.velocity = currentWind * speed;
                 }
-                // —Ş—‚µ‚Ä‚¢‚È‚¯‚ê‚Î
+                // é¡ä¼¼ã—ã¦ã„ãªã‘ã‚Œã°
                 else
                 {
-                    // ‚¨‚¿‚Ä‚¢‚­
+                    // ãŠã¡ã¦ã„ã
                     playerRigidbody.velocity = gravityDirection;
                 }
             }
-            // 5m‚©‚ç20m‚Ü‚Åã¸
+            // 5mã‹ã‚‰20mã¾ã§ä¸Šæ˜‡
             if (player.transform.position.y < 5)
             {
                 up = true;
             }
-            // 20m‚Ü‚Åã¸‚µ‚½‚ç‚Æ‚Ü‚é
+            // 20mã¾ã§ä¸Šæ˜‡ã—ãŸã‚‰ã¨ã¾ã‚‹
             if (player.transform.position.y > 20 && up)
             {
                 up = false;
             }
-            // ã¸’†
+            // ä¸Šæ˜‡ä¸­
             if (up)
             {
                 playerRigidbody.AddForce(windDirection[0], ForceMode.Impulse);
@@ -132,13 +132,13 @@ public class WindManager : MonoBehaviour
             if (timer < windCicleTime && twiceBoost)
             {
                 currentWind = windDirection[currentWindIndex];
-                // ŒX‚«‚Éˆê”Ô‹ß‚¢•ûŒü‚É•—‚ª‚­
+                // å‚¾ãã«ä¸€ç•ªè¿‘ã„æ–¹å‘ã«é¢¨ãŒå¹ã
                 playerRigidbody.velocity = currentWind * 3 * speed;
             }
             else if (timer < windCicleTime && !twiceBoost)
             {
                 currentWind = windDirection[currentWindIndex];
-                // ŒX‚«‚Éˆê”Ô‹ß‚¢•ûŒü‚É•—‚ª‚­
+                // å‚¾ãã«ä¸€ç•ªè¿‘ã„æ–¹å‘ã«é¢¨ãŒå¹ã
                 playerRigidbody.velocity = currentWind * speed;
             }
             else
@@ -154,13 +154,13 @@ public class WindManager : MonoBehaviour
         float similarity;
         float maxSimilarity = -1;
         int tmpCurrentWindIndex = currentWindIndex;
-        // ŒX‚«‚Æˆê”Ô‹ß‚¢•ûŒü‚ğŠ„‚èo‚·
+        // å‚¾ãã¨ä¸€ç•ªè¿‘ã„æ–¹å‘ã‚’å‰²ã‚Šå‡ºã™
         for (int i = 1; i < windDirection.Length; i++)
         {
             rightControllerTilt.y = 0;
             similarity = Vector3.Dot(rightControllerTilt.normalized, windXZDirection[i].normalized);
-            /*Debug.Log("‰EƒRƒ“ƒgƒ[ƒ‰[‚ÌŒX‚«" + rightControllerTilt.normalized + "~" + windXZDirection[i].normalized);
-            Debug.Log("—Ş—“x" + similarity);*/
+            /*Debug.Log("å³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®å‚¾ã" + rightControllerTilt.normalized + "Ã—" + windXZDirection[i].normalized);
+            Debug.Log("é¡ä¼¼åº¦" + similarity);*/
             if (similarity > maxSimilarity)
             {
                 maxSimilarity = similarity;
