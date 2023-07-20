@@ -4,27 +4,27 @@ using UnityEngine;
 using System;
 using TMPro;
 
-/* •—‚Ì’†‚ğU•à‚·‚éƒvƒŒƒCƒ„[‚ÌƒRƒ“ƒgƒ[ƒ‰[
-* •—‚ÌƒxƒNƒgƒ‹‚ÉP‚ğŒX‚¯‚é‚Æ•—‚Ì•ûŒü‚ÉƒvƒŒƒCƒ„[‚ªi‚Ş
-* ŒX‚¯‚È‚¢‚ÆÃ‚©‚É­‚µ‚¸‚Â—‚¿‚Ä‚¢‚­
-* Œ»İ‚Ì‚“x‚ğ•\¦‚·‚é
+/* é¢¨ã®ä¸­ã‚’æ•£æ­©ã™ã‚‹ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼
+* é¢¨ã®ãƒ™ã‚¯ãƒˆãƒ«ã«å‚˜ã‚’å‚¾ã‘ã‚‹ã¨é¢¨ã®æ–¹å‘ã«ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒé€²ã‚€
+* å‚¾ã‘ãªã„ã¨é™ã‹ã«å°‘ã—ãšã¤è½ã¡ã¦ã„ã
+* ç¾åœ¨ã®é«˜åº¦ã‚’è¡¨ç¤ºã™ã‚‹
 */
 
 public class PlayerController : MonoBehaviour
 {
-    // ‰¼UI
+    // ä»®UI
     [SerializeField] private TextMeshProUGUI heightText;
 
-    // ‰E‚ÌƒRƒ“ƒgƒ[ƒ‰[‚ÌTransform
+    // å³ã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®Transform
     //[SerializeField] private Transform rightControllerTransform;
 
-    // Player‚ÌRigidbody
+    // Playerã®Rigidbody
     private Rigidbody playerRigidbody;
 
-    // —‚¿‚Ä‚¢‚­‘¬“x
+    // è½ã¡ã¦ã„ãé€Ÿåº¦
     [SerializeField] private Vector3 gravityDirection;
 
-    // ¡‚¢‚éƒ`ƒFƒbƒNƒ|ƒCƒ“ƒg
+    // ä»Šã„ã‚‹ãƒã‚§ãƒƒã‚¯ãƒã‚¤ãƒ³ãƒˆ
     private int currentCheckPointIndex = 0;
 
     [SerializeField] private WindController windController;
@@ -44,7 +44,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         heightText.text = this.transform.position.y.ToString();
-        // ƒL[‚ğ‰Ÿ‚µ‚½‚ç‘O•ûŒü‚É‚Ó‚í‚è‚Æ•‚‚­
+        // ã‚­ãƒ¼ã‚’æŠ¼ã—ãŸã‚‰å‰æ–¹å‘ã«ãµã‚ã‚Šã¨æµ®ã
         if (OVRInput.GetDown(OVRInput.RawButton.Y) && isPulling == false)
         {
             StartCoroutine(PullUmbrella());
