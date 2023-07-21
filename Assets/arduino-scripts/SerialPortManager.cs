@@ -20,7 +20,7 @@ public class SerialPortManager : MonoBehaviour
         }
     }
 
-    public void OpenSerialPort(string portName = "COM3", int baudRate = 9600)
+    public void OpenSerialPort(string portName = "COM4", int baudRate = 9600)
     {
         try
         {

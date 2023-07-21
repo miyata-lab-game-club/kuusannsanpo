@@ -8,8 +8,8 @@ using UnityEngine;
 
 public class ReceiveFromArduino : MonoBehaviour
 {
-    public GameObject cube; // ŒX‚«‚ğ”½‰f‚·‚éƒLƒ…[ƒu‚ÌQÆ
-    public RotateCube rotateCube; // RotateCube‚Ö‚ÌQÆ‚ğ’Ç‰Á
+    // public GameObject cube; // ï¿½Xï¿½ï¿½ï¿½ğ”½‰fï¿½ï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½[ï¿½uï¿½ÌQï¿½ï¿½
+    // public RotateCube rotateCube; // RotateCubeï¿½Ö‚ÌQï¿½Æ‚ï¿½Ç‰ï¿½
     private Queue outputQueue;
     private SerialPort serialPort;
     private Thread thread;
@@ -43,7 +43,7 @@ public class ReceiveFromArduino : MonoBehaviour
             }
             catch (System.Exception e)
             {
-                //ƒGƒ‰[ƒnƒ“ƒhƒŠƒ“ƒOB•K—v‚É‰‚¶‚Ä‚±‚±‚ÉƒR[ƒh‚ğ‘‚¢‚Ä‚­‚¾‚³‚¢B
+                //ï¿½Gï¿½ï¿½ï¿½[ï¿½nï¿½ï¿½ï¿½hï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½Bï¿½Kï¿½vï¿½É‰ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ÉƒRï¿½[ï¿½hï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B
             }
         }
     }
@@ -59,13 +59,13 @@ public class ReceiveFromArduino : MonoBehaviour
             {
                 UnityEngine.Debug.Log("3");
                 // Gyro mode
-                                               // ‰½‚©“KØ‚Èˆ—
+                                               // ï¿½ï¿½ï¿½ï¿½ï¿½Kï¿½Ø‚Èï¿½ï¿½ï¿½
 
             }
             else if (mode == 1)
             {
                 UnityEngine.Debug.Log("2");// Accelerometer mode
-                                               // ‰½‚©“KØ‚Èˆ—
+                                               // ï¿½ï¿½ï¿½ï¿½ï¿½Kï¿½Ø‚Èï¿½ï¿½ï¿½
             }
             else if (mode == 2)
             {
@@ -75,8 +75,8 @@ public class ReceiveFromArduino : MonoBehaviour
                 float y = float.Parse(parts[1]);
                 float z = float.Parse(parts[2]);
 
-                // ŒX‚«‚ğRotateCube‚É”½‰f‚µ‚Ü‚·B
-                rotateCube.SetRotation(x, y, z);
+                // ï¿½Xï¿½ï¿½ï¿½ï¿½RotateCubeï¿½É”ï¿½ï¿½fï¿½ï¿½ï¿½Ü‚ï¿½ï¿½B
+                // rotateCube.SetRotation(x, y, z);
             }
         }
     }
