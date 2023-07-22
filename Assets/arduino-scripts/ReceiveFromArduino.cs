@@ -63,7 +63,7 @@ public class ReceiveFromArduino : MonoBehaviour
             float[] rotate = (float[])outputQueue.Dequeue();
 
             // Set the rotation of the GameObject
-            rotateObject.transform.eulerAngles = new Vector3(rotate[0], -rotate[1], rotate[2]);
+            rotateObject.transform.eulerAngles = new Vector3(rotate[0], -rotate[2], -rotate[1]+90);
         }
     }
 
