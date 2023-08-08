@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.XR;
 
 public class WindManager : MonoBehaviour
 {
@@ -19,8 +20,11 @@ public class WindManager : MonoBehaviour
     // 落ちていく速度
     [SerializeField] private Vector3 gravityDirection;
 
+    [SerializeField] private Transform centerEyeAnchor;
     [SerializeField] private Transform rightControllerTransform;
     [SerializeField] private GameObject[] directionUIs;
+    [SerializeField] private float upHeight = 20;
+    [SerializeField] private float startUpHeight = 5;
     [SerializeField] private float windCicleTime = 5;
     private float timer;
     private Vector3 currentWind;
@@ -47,6 +51,10 @@ public class WindManager : MonoBehaviour
 
     private void Start()
     {
+        /*
+        Vector3 oculusForward = InputTracking.GetLocalRotation(XRNode.CenterEye) * Vector3.forward;
+        player.transform.rotation = Quaternion.LookRotation(oculusForward, Vector3.up);*/
+        player.transform.forward = centerEyeAnchor.forward;
         heightText.text = this.transform.position.y.ToString();
         playerRigidbody = player.GetComponent<Rigidbody>();
         timer = 0;
@@ -58,6 +66,7 @@ public class WindManager : MonoBehaviour
 
     private void Update()
     {
+        //player.transform.forward = centerEyeAnchor.forward;
         // 右コントローラーの傾き
         Quaternion rightControllerRotation = rightControllerTransform.rotation;
         // 右コントローラーの傾きをベクトルにする
@@ -83,7 +92,7 @@ public class WindManager : MonoBehaviour
     {
         if (boost != true)
         {
-            if (player.transform.position.y > 5 && !up)
+            if (player.transform.position.y > startUpHeight && !up)
             {
                 timer += Time.deltaTime;
                 if (timer > windCicleTime)
@@ -109,12 +118,12 @@ public class WindManager : MonoBehaviour
                 }
             }
             // 5mから20mまで上昇
-            if (player.transform.position.y < 5)
+            if (player.transform.position.y < startUpHeight)
             {
                 up = true;
             }
             // 20mまで上昇したらとまる
-            if (player.transform.position.y > 20 && up)
+            if (player.transform.position.y > upHeight && up)
             {
                 up = false;
             }
