@@ -13,6 +13,9 @@ public class WindManager : MonoBehaviour
     // PlayerのRigidbody
     private Rigidbody playerRigidbody;
 
+    // 傘を引っ張るパワー
+    private float pullPower = 0;
+
     private bool up;
     private bool boost;
     private bool twiceBoost;// 速度二倍
@@ -66,6 +69,19 @@ public class WindManager : MonoBehaviour
 
     private void Update()
     {
+        // 引っ張る強さによってスピードが変わる
+        if (pullPower == 3)
+        {
+            speed = 3;
+        }
+        else if (pullPower == 2)
+        {
+            speed = 2;
+        }
+        else
+        {
+            speed = 1;
+        }
         //player.transform.forward = centerEyeAnchor.forward;
         // 右コントローラーの傾き
         Quaternion rightControllerRotation = rightControllerTransform.rotation;
