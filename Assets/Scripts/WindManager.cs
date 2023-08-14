@@ -16,7 +16,7 @@ public class WindManager : MonoBehaviour
     // 傘を引っ張るパワー
     public float pullPower = 0;
 
-    private bool up;
+    public bool up;
     private bool boost;
     private bool twiceBoost;// 速度二倍
 
