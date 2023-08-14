@@ -20,7 +20,7 @@ public class SendToArduino : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         try
         {
@@ -30,7 +30,7 @@ public class SendToArduino : MonoBehaviour
                 int upValue = windManager.up ? 1 : 0;  // この行でboolをintに変換するTrueが1でFalseが0
 
                 // データを":"で区切って送信
-                string dataToSend = $"{windManager.currentWindIndex}:{windManager.pullPower}:{upValue}";
+                string dataToSend = $"{windManager.currentWindIndex}:{windManager.pullPower}:{upValue}:{"a"}";
                 serialPort.WriteLine(dataToSend);
                 Debug.Log(dataToSend);
             }
