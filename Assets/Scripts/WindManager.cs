@@ -14,7 +14,7 @@ public class WindManager : MonoBehaviour
     private Rigidbody playerRigidbody;
 
     // 傘を引っ張るパワー
-    private float pullPower = 0;
+    public float pullPower = 0;
 
     private bool up;
     private bool boost;
@@ -31,7 +31,7 @@ public class WindManager : MonoBehaviour
     [SerializeField] private float windCicleTime = 5;
     private float timer;
     private Vector3 currentWind;
-    private int currentWindIndex = 0;
+    public int currentWindIndex = 0;
 
     //　上、北、北東、東、南東、南、南西、西、北西
     public Vector3[] windDirection = new Vector3[]
