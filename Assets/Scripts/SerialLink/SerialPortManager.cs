@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.IO.Ports;
 using System.Threading;
-using System; 
+using System;
 
 public class SerialPortManager : MonoBehaviour
 {
@@ -12,22 +12,30 @@ public class SerialPortManager : MonoBehaviour
 
     [Header("Port Names")]
     [SerializeField]
-    private string portName_s1 = "COM1";
+    private string s1 = "COM1";
     [SerializeField]
-    private string portName_s2 = "COM2";
+    private string s2 = "COM2";
     [SerializeField]
-    private string portName_s3 = "COM3";
-    [SerializeField]
-    private string portName_s4 = "COM4";
+    private string s3 = "COM3";
+        [SerializeField]
 
-    public SerialPort[] serialPorts = new SerialPort[4];
+    //ESP側の不調により以下は一旦省略
+    // private string s4 = "COM4";
+
+    //     [SerializeField]
+    // private string neckfun = "COM5";
+
+    //     [SerializeField]
+    // private string umbrella = "COM6";
+
+    public SerialPort[] serialPorts = new SerialPort[3];
     public int baudRate = 115200;
 
-    private Thread[] threads = new Thread[4];
+    private Thread[] threads = new Thread[3];
     private bool isRunning_ = false;
 
-    private string[] messages = new string[4];
-    private bool[] isNewMessageReceived_ = new bool[4];
+    private string[] messages = new string[3];
+    private bool[] isNewMessageReceived_ = new bool[3];
 
     private void Awake()
     {
@@ -43,14 +51,14 @@ public class SerialPortManager : MonoBehaviour
 
     void Update()
     {
-        for (int i = 0; i < 4; i++)
-        {
-            if (isNewMessageReceived_[i])
-            {
-                OnDataReceived(messages[i]);
-                isNewMessageReceived_[i] = false;
-            }
-        }
+        // for (int i = 0; i < 3; i++)
+        // {
+        //     if (isNewMessageReceived_[i])
+        //     {
+        //         OnDataReceived(messages[i]);
+        //         isNewMessageReceived_[i] = false;
+        //     }
+        // }
     }
 
     private void OnApplicationQuit()
@@ -58,43 +66,32 @@ public class SerialPortManager : MonoBehaviour
         CloseAllPorts();
     }
 
-    // private void OpenAllPorts()
-    // {
-    //     string[] portNames = { portName_s1, portName_s2, portName_s3, portName_s4 };
-    //     for (int i = 0; i < 4; i++)
-    //     {
-    //         serialPorts[i] = new SerialPort(portNames[i], baudRate, Parity.None, 8, StopBits.One);
-    //         serialPorts[i].Open();
-    //         threads[i] = new Thread(() => Read(i));
-    //         threads[i].Start();
-    //     }
-    //     isRunning_ = true;
-    // }
-private void OpenAllPorts()
-{
-    string[] portNames = { portName_s1, portName_s2, portName_s3, portName_s4 };
-    for (int i = 0; i < 4; i++)
+    private void OpenAllPorts()
     {
-        try
+        string[] portNames = { s1, s2,s3 };
+        for (int i = 0; i < 3; i++)
         {
-            serialPorts[i] = new SerialPort(portNames[i], baudRate, Parity.None, 8, StopBits.One);
-            serialPorts[i].Open();
+            try
+            {
+                serialPorts[i] = new SerialPort(portNames[i], baudRate, Parity.None, 8, StopBits.One);
+                serialPorts[i].Open();
 
-            int threadIndex = i; // ラムダキャプチャの問題を回避するためのローカル変数
-            threads[i] = new Thread(() => Read(threadIndex));
-            threads[i].Start();
+                int threadIndex = i; // Avoid lambda capture problem
+                threads[i] = new Thread(() => Read(threadIndex));
+                threads[i].Start();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error opening port or starting thread for index {i}: {e.Message}");
+            }
         }
-        catch (Exception e)
-        {
-            Debug.LogError($"Error opening port or starting thread for index {i}: {e.Message}");
-        }
+        isRunning_ = true;
     }
-    isRunning_ = true;
-}
+
     private void CloseAllPorts()
     {
         isRunning_ = false;
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 3; i++)
         {
             if (threads[i] != null && threads[i].IsAlive)
             {

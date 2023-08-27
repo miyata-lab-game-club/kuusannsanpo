@@ -14,7 +14,7 @@ public class WindManager : MonoBehaviour
     private Rigidbody playerRigidbody;
 
     // 傘を引っ張るパワー
-    public float pullPower = 0;
+    public int pullPower = 0;
 
     public bool up;
     private bool boost;
