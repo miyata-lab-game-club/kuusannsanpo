@@ -5,8 +5,7 @@ using UnityEngine;
 public class SendToEsp32 : MonoBehaviour
 {
     private SerialPortManager spManager; // SerialPortManager の参照を持つ変数
-    // WindManagerのup(bool)をintにして格納するようの変数
-    private int windBoostedRise;
+
     // WindManagerの参照
     public WindManager windManager;
 
@@ -15,11 +14,16 @@ public class SendToEsp32 : MonoBehaviour
     private int PortIndex_2;
     private int PortIndex_3;
 
+    private int PortIndex_4;
+
+    // WindManagerのup(bool)をa or b　のstringにして格納するようの変数
+    private string windBoostedRise;
     //文字送る用の型
     private string port1_DataToSend;
     private string port2_DataToSend;
     private string port3_DataToSend;
-
+    private string port4_DataToSend;
+    private string port5_DataToSend;
 
     private void Start()
     {
@@ -42,26 +46,25 @@ public class SendToEsp32 : MonoBehaviour
     {
         try
         {
-            windBoostedRise = windManager.up ? 1 : 0; // windManager.upが真なら1、偽なら0を格納
-
-            //
+            // windManager.upが真なら1、偽なら0を格納
+            windBoostedRise = windManager.up ? "a" : "b"; 
+            
+            //力覚装置1~4s用に文字型に変換(引っ張る力と急上昇を送信)
+            port1_DataToSend = PortIndex_1.ToString() + windBoostedRise.ToString();
+            port2_DataToSend = PortIndex_2.ToString() + windBoostedRise.ToString();
+            port3_DataToSend = PortIndex_3.ToString() + windBoostedRise.ToString();
+            port4_DataToSend = PortIndex_4.ToString() + windBoostedRise.ToString();
+            
+            //NeckFan(方向と急上昇を送信)
+            port5_DataToSend = windManager.currentWindIndex.ToString() + windBoostedRise.ToString();
             SetPortIndices();
-            spManager.WriteToPort(0, port1_DataToSend);
-            spManager.WriteToPort(1, port2_DataToSend);
-            spManager.WriteToPort(2, port3_DataToSend);
-            // spManager.WriteToPort(3, "111");
-            // spManager.WriteToPort(4, "111");
-            // spManager.WriteToPort(5, "111");
 
-            //送るように1つの文字型にする。
-             Debug.Log(port1_DataToSend);
-             Debug.Log(port2_DataToSend);
-             Debug.Log(port3_DataToSend);
-
-            port1_DataToSend = PortIndex_1.ToString() + windManager.pullPower.ToString() + windBoostedRise.ToString();
-            port2_DataToSend = PortIndex_2.ToString() + windManager.pullPower.ToString() + windBoostedRise.ToString();
-            port3_DataToSend = PortIndex_3.ToString() + windManager.pullPower.ToString() + windBoostedRise.ToString();
-
+            //それぞれ送信
+            spManager.WriteToPort(0, port1_DataToSend);//s1に送信
+            spManager.WriteToPort(1, port2_DataToSend);//s2に送信
+            spManager.WriteToPort(2, port3_DataToSend);//s3に送信
+            spManager.WriteToPort(3, port4_DataToSend);//s4に送信
+            spManager.WriteToPort(4, port5_DataToSend);//Neckfanに送信
         }
         catch (Exception ex)
         {
@@ -74,28 +77,28 @@ public class SendToEsp32 : MonoBehaviour
         switch (windManager.currentWindIndex)
         {
             case 1:
-                PortIndex_1 = 0; PortIndex_2 = 1; PortIndex_3 = 0;
+                PortIndex_1 = 0; PortIndex_2 = 1; PortIndex_3 = 0; PortIndex_4 = 0;
                 break;
             case 2:
-                PortIndex_1 = 1; PortIndex_2 = 1; PortIndex_3 = 2;
+                PortIndex_1 = 1; PortIndex_2 = 1; PortIndex_3 = 2; PortIndex_4 = 0;
                 break;
             case 3:
-                PortIndex_1 = 1; PortIndex_2 = 1; PortIndex_3 = 0;
+                PortIndex_1 = 1; PortIndex_2 = 1; PortIndex_3 = 0; PortIndex_4 = 0;
                 break;
             case 4:
-                PortIndex_1 = 0; PortIndex_2 = 1; PortIndex_3 = 0;
+                PortIndex_1 = 0; PortIndex_2 = 1; PortIndex_3 = 0; PortIndex_4 = 0;
                 break;
             case 5:
-                PortIndex_1 = 0; PortIndex_2 = 0; PortIndex_3 = 0;
+                PortIndex_1 = 0; PortIndex_2 = 0; PortIndex_3 = 0; PortIndex_4 = 0;
                 break;
             case 6:
-                PortIndex_1 = 1; PortIndex_2 = 1; PortIndex_3 = 1;
+                PortIndex_1 = 1; PortIndex_2 = 1; PortIndex_3 = 1; PortIndex_4 = 0;
                 break;
             case 7:
-                PortIndex_1 = 1; PortIndex_2 = 1; PortIndex_3 = 0;
+                PortIndex_1 = 1; PortIndex_2 = 1; PortIndex_3 = 0; PortIndex_4 = 0;
                 break;
             case 8:
-                PortIndex_1 = 0; PortIndex_2 = 1; PortIndex_3 = 1;
+                PortIndex_1 = 0; PortIndex_2 = 1; PortIndex_3 = 1; PortIndex_4 = 0;
                 break;
         }
     }

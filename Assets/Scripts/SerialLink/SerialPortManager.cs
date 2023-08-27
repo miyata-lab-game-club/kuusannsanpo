@@ -17,25 +17,21 @@ public class SerialPortManager : MonoBehaviour
     private string s2 = "COM2";
     [SerializeField]
     private string s3 = "COM3";
-        [SerializeField]
+    [SerializeField]
+    private string s4 = "COM4";
+    [SerializeField]
+    private string nf = "COM5"; // s5をnfに変更
+    [SerializeField]
+    private string kasa = "COM6"; // s6をkasaに変更
 
-    //ESP側の不調により以下は一旦省略
-    // private string s4 = "COM4";
-
-    //     [SerializeField]
-    // private string neckfun = "COM5";
-
-    //     [SerializeField]
-    // private string umbrella = "COM6";
-
-    public SerialPort[] serialPorts = new SerialPort[3];
+    public SerialPort[] serialPorts = new SerialPort[6];
     public int baudRate = 115200;
 
-    private Thread[] threads = new Thread[3];
+    private Thread[] threads = new Thread[6];
     private bool isRunning_ = false;
 
-    private string[] messages = new string[3];
-    private bool[] isNewMessageReceived_ = new bool[3];
+    private string[] messages = new string[6];
+    private bool[] isNewMessageReceived_ = new bool[6];
 
     private void Awake()
     {
@@ -51,14 +47,14 @@ public class SerialPortManager : MonoBehaviour
 
     void Update()
     {
-        // for (int i = 0; i < 3; i++)
-        // {
-        //     if (isNewMessageReceived_[i])
-        //     {
-        //         OnDataReceived(messages[i]);
-        //         isNewMessageReceived_[i] = false;
-        //     }
-        // }
+        for (int i = 0; i < 6; i++)
+        {
+            if (isNewMessageReceived_[i])
+            {
+                OnDataReceived(messages[i]);
+                isNewMessageReceived_[i] = false;
+            }
+        }
     }
 
     private void OnApplicationQuit()
@@ -68,8 +64,8 @@ public class SerialPortManager : MonoBehaviour
 
     private void OpenAllPorts()
     {
-        string[] portNames = { s1, s2,s3 };
-        for (int i = 0; i < 3; i++)
+        string[] portNames = { s1, s2, s3, s4, nf, kasa }; // s5とs6をnfとkasaに変更
+        for (int i = 0; i < 6; i++)
         {
             try
             {
@@ -91,7 +87,7 @@ public class SerialPortManager : MonoBehaviour
     private void CloseAllPorts()
     {
         isRunning_ = false;
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 6; i++)
         {
             if (threads[i] != null && threads[i].IsAlive)
             {
