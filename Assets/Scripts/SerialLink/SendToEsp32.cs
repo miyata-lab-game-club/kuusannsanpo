@@ -1,6 +1,7 @@
 using System;
 using System.IO.Ports;
 using UnityEngine;
+using System.Collections;
 
 public class SendToEsp32 : MonoBehaviour
 {
@@ -40,36 +41,51 @@ public class SendToEsp32 : MonoBehaviour
             Debug.LogError("WindManager reference is not set on SendToEsp32.");
             return;
         }
+        {
+            StartCoroutine(SendDataCoroutine());
+        }
+    }
+    private IEnumerator SendDataCoroutine()
+    {
+        while (true)  // 無限ループで送信処理を繰り返す
+        {
+            try
+            {
+                // windManager.upが真なら1、偽なら0を格納
+                windBoostedRise = windManager.up ? "a" : "b";
+
+                // 力覚装置1~4s用に文字型に変換(引っ張る力と急上昇を送信)
+                port1_DataToSend = PortIndex_1.ToString() + windBoostedRise.ToString();
+                port2_DataToSend = PortIndex_2.ToString() + windBoostedRise.ToString();
+                port3_DataToSend = PortIndex_3.ToString() + windBoostedRise.ToString();
+                port4_DataToSend = PortIndex_4.ToString() + windBoostedRise.ToString();
+
+                // NeckFan(方向と急上昇を送信)
+                port5_DataToSend = windManager.currentWindIndex.ToString() + windBoostedRise.ToString();
+                SetPortIndices();
+
+                // それぞれ送信
+                spManager.WriteToPort(0, port1_DataToSend);//s1に送信
+                spManager.WriteToPort(1, port2_DataToSend);//s2に送信
+                spManager.WriteToPort(2, port3_DataToSend);//s3に送信
+                spManager.WriteToPort(3, port4_DataToSend);//s4に送信
+                spManager.WriteToPort(4, port5_DataToSend);//Neckfanに送信
+
+                //デバックログ
+                Debug.Log(port5_DataToSend);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("Could not send to ESP32: " + ex.Message);
+            }
+
+            yield return new WaitForSeconds(0.5f);  // 0.5秒待機
+        }
     }
 
     private void FixedUpdate()
     {
-        try
-        {
-            // windManager.upが真なら1、偽なら0を格納
-            windBoostedRise = windManager.up ? "a" : "b"; 
-            
-            //力覚装置1~4s用に文字型に変換(引っ張る力と急上昇を送信)
-            port1_DataToSend = PortIndex_1.ToString() + windBoostedRise.ToString();
-            port2_DataToSend = PortIndex_2.ToString() + windBoostedRise.ToString();
-            port3_DataToSend = PortIndex_3.ToString() + windBoostedRise.ToString();
-            port4_DataToSend = PortIndex_4.ToString() + windBoostedRise.ToString();
-            
-            //NeckFan(方向と急上昇を送信)
-            port5_DataToSend = windManager.currentWindIndex.ToString() + windBoostedRise.ToString();
-            SetPortIndices();
-
-            //それぞれ送信
-            spManager.WriteToPort(0, port1_DataToSend);//s1に送信
-            spManager.WriteToPort(1, port2_DataToSend);//s2に送信
-            spManager.WriteToPort(2, port3_DataToSend);//s3に送信
-            spManager.WriteToPort(3, port4_DataToSend);//s4に送信
-            spManager.WriteToPort(4, port5_DataToSend);//Neckfanに送信
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError("Could not send to ESP32: " + ex.Message);
-        }
+       
     }
 
     private void SetPortIndices()

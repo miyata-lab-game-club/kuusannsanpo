@@ -618,6 +618,9 @@ MonoBehaviour:
   s1: COM11
   s2: COM13
   s3: COM14
+  s4: COM4
+  nf: COM5
+  kasa: COM8
   baudRate: 115200
 --- !u!114 &340929203
 MonoBehaviour:
