@@ -7,46 +7,71 @@ using UnityEngine;
 public class ReceiveFromEsp32 : MonoBehaviour
 {
     private Queue outputQueue;
-    private SerialPortManager serialPortManager;
-    private bool isRunning = false;
+    private SerialPortManager spManager;//
+
+    private float my_pitch;
+    private float my_roll;
+    private float my_yaw;
+    private char buttonStatus;
 
     private void Start()
-    {
-        outputQueue = Queue.Synchronized(new Queue());
-        serialPortManager = GetComponent<SerialPortManager>();
-        if (serialPortManager != null)
-        {
-            serialPortManager.OnDataReceived += HandleDataReceived;
-        }
-    }
+    {        spManager = SerialPortManager.Instance;
 
-    private void HandleDataReceived(string message)
-    {
-        if (message != null)
+        if (spManager == null)
         {
-            outputQueue.Enqueue(message);
+            Debug.LogError("SerialPortManager instance not found!");
+            return;
         }
+        //outputQueue = Queue.Synchronized(new Queue());
+        //spManager = SerialPortManager.Instance;
+        Debug.Log("SerialPortManager initialized.");
     }
 
     private void Update()
     {
-        while (outputQueue.Count != 0)
-        {
-            string message = (string)outputQueue.Dequeue();
 
-            if (message.Trim() == "1")
-            {
-                Debug.ClearDeveloperConsole(); // Clears the console when the button is pressed
-            }
+        Debug.Log("dd");
+        if (spManager.serialPorts[5].IsOpen)
+        {
+            Debug.Log("dddddd");
+            string message = spManager.serialPorts[5].ReadLine();
+            ProcessReceivedData(message);
         }
+        else
+        {
+            Debug.LogWarning("Serial port at index 5 is not open.");
+        }
+
     }
 
-    private void OnDestroy()
+
+    private void ProcessReceivedData(string message)
     {
-        isRunning = false;
-        if (serialPortManager != null)
+        try
         {
-            serialPortManager.OnDataReceived -= HandleDataReceived;
+            Debug.Log($"Received message: {message}");
+
+            string[] data = message.Split(',');
+
+            if (data.Length == 4)
+            {
+                my_pitch = float.Parse(data[0].Trim());
+                my_roll = float.Parse(data[1].Trim());
+                my_yaw = float.Parse(data[2].Trim());
+                buttonStatus = data[3].Trim()[0];
+
+                Debug.Log($"Parsed - Pitch: {my_pitch}, Roll: {my_roll}, Yaw: {my_yaw}, ButtonStatus: {buttonStatus}");
+
+                outputQueue.Enqueue(message);
+            }
+            else
+            {
+                Debug.LogWarning("Unexpected data format received.");
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Error while processing received data: {e.Message}");
         }
     }
 }
