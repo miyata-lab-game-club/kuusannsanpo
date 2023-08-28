@@ -103,12 +103,10 @@ public class SerialPortManager : MonoBehaviour
 
     public void Read(int index)
     {
-        Debug.Log("動いて居r");
         while (isRunning_ && serialPorts[index] != null && serialPorts[index].IsOpen)
-        {        Debug.Log("動いて居r2");
+        {      
             try
-            {   Debug.Log(messages[5]);
-                        Debug.Log(messages);
+            {   
                 messages[index] = serialPorts[index].ReadLine();
                 isNewMessageReceived_[index] = true;
             }
