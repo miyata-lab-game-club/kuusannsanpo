@@ -72,11 +72,6 @@ public class SendToEsp32 : MonoBehaviour
                 spManager.WriteToPort(4, port5_DataToSend);//Neckfanに送信
 
             // spManager.Read(5)の結果をデバッグログで表示
-            string receivedData = spManager.Read(5); // 返り値を受け取る
-            Debug.Log("Received from ESP32 at port 5: " + receivedData);
-                // //デバックログ
-                // Debug.Log(port4_DataToSend);
-                // Debug.Log(port5_DataToSend);
             }
             catch (Exception ex)
             {

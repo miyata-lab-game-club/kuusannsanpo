@@ -45,11 +45,11 @@ public class SerialPortManager : MonoBehaviour
         OpenAllPorts();
     }
 
-    void Update()
+      void Update()
     {
         for (int i = 0; i < 6; i++)
         {
-            if (isNewMessageReceived_[i])
+            if (isNewMessageReceived_[i] && OnDataReceived != null)
             {
                 OnDataReceived(messages[i]);
                 isNewMessageReceived_[i] = false;
