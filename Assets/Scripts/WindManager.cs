@@ -31,6 +31,9 @@ public class WindManager : MonoBehaviour
     [SerializeField] private float windCicleTime = 5;
     private float timer;
     private Vector3 currentWind;
+
+
+    [SerializeField] private ReceiveFromEsp32 ReceiveFromEsp32;// SerialPortManager の参照を持つ変数
     public int currentWindIndex = 0;
 
     //　上、北、北東、東、南東、南、南西、西、北西
@@ -52,6 +55,7 @@ public class WindManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI similarityText;
 
+
     private void Start()
     {
         /*
@@ -63,6 +67,7 @@ public class WindManager : MonoBehaviour
         timer = 0;
         timerText.text = timer.ToString();
         currentWind = currentWindDirection();
+
     }
 
     private Vector3 rightControllerTilt;
@@ -91,6 +96,7 @@ public class WindManager : MonoBehaviour
         rightControllerTilt.y = 0;
 
         heightText.text = this.transform.position.y.ToString();
+
         if (OVRInput.GetDown(OVRInput.RawButton.A) && !boost)
         {
             boost = true;
@@ -98,6 +104,19 @@ public class WindManager : MonoBehaviour
             twiceBoost = currentWindFromController();
             SetActiveWindDirection(currentWindIndex);
         }
+
+        Debug.Log(ReceiveFromEsp32.buttonState);
+        //スイッチ押しているなら加速
+        if (ReceiveFromEsp32.buttonState == 'b' && !boost)
+        {
+            Debug.Log("加速");
+            boost = true;
+            timer = 2;
+            twiceBoost = currentWindFromController();
+            SetActiveWindDirection(currentWindIndex);
+        }
+
+
 
         Debug.DrawLine(new Vector3(-28, 9, -60), new Vector3(-28, 9, -60) + rightControllerTilt * 5, Color.red);
 
