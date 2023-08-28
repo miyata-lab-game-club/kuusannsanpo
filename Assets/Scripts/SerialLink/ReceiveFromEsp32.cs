@@ -20,37 +20,35 @@ public class ReceiveFromEsp32 : MonoBehaviour
     }
 
     private void ProcessReceivedData(string message)
+{
+    try
     {
-        Debug.Log(message);
-        try
+        string[] parts = message.Split(',');
+        if (parts.Length == 3)  // 3つの要素を期待
         {
-            string[] parts = message.Split(',');
-            if (parts.Length == 4)
+            float[] data = new float[3];
+            for (int i = 0; i < 3; i++)
             {
-                float[] data = new float[3];
-                for (int i = 0; i < 3; i++)
-                {
-                    data[i] = float.Parse(parts[i]);
-                }
-                char buttonStatus = parts[3].Trim()[0];
-                outputQueue.Enqueue(new Tuple<float[], char>(data, buttonStatus));
+                data[i] = float.Parse(parts[i]);
             }
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"Error while processing received data: {e.Message}");
+            outputQueue.Enqueue(data);  // Tupleは不要なので、直接配列をEnqueue
         }
     }
-
-    private void Update()
+    catch (System.Exception e)
     {
-        if (outputQueue.Count != 0)
-        {
-            var dataTuple = (Tuple<float[], char>)outputQueue.Dequeue();
-            float[] rotate = dataTuple.Item1;
-            rotateObject.transform.eulerAngles = new Vector3(rotate[0], rotate[1], rotate[2]);
-        }
+        Debug.LogError($"Error while processing received data: {e.Message}");
     }
+}
+
+  private void Update()
+{
+    Debug.Log(outputQueue.Count);
+    if (outputQueue.Count != 0)
+    {
+        float[] rotate = (float[])outputQueue.Dequeue();
+        rotateObject.transform.eulerAngles = new Vector3(-rotate[1], 0,-rotate[0]);
+    }
+}
 
     private void OnDestroy()
     {
