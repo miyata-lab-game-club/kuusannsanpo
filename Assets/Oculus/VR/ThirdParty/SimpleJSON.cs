@@ -1025,9 +1025,9 @@ namespace OVRSimpleJSON // SimpleJSON
             string s = obj as string;
             if (s != null)
                 return m_Data == s;
-            JSONString s2 = obj as JSONString;
-            if (s2 != null)
-                return m_Data == s2.m_Data;
+            JSONString RF_Port = obj as JSONString;
+            if (RF_Port != null)
+                return m_Data == RF_Port.m_Data;
             return false;
         }
         public override int GetHashCode()
@@ -1096,9 +1096,9 @@ namespace OVRSimpleJSON // SimpleJSON
                 return false;
             if (base.Equals(obj))
                 return true;
-            JSONNumber s2 = obj as JSONNumber;
-            if (s2 != null)
-                return m_Data == s2.m_Data;
+            JSONNumber RF_Port = obj as JSONNumber;
+            if (RF_Port != null)
+                return m_Data == RF_Port.m_Data;
             if (IsNumeric(obj))
                 return Convert.ToDouble(obj) == m_Data;
             return false;
