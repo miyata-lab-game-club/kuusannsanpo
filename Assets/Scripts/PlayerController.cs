@@ -4,50 +4,41 @@ using UnityEngine;
 using System;
 using TMPro;
 
-/* •—‚Ì’†‚ğU•à‚·‚éƒvƒŒƒCƒ„[‚ÌƒRƒ“ƒgƒ[ƒ‰[
-* •—‚ÌƒxƒNƒgƒ‹‚ÉP‚ğŒX‚¯‚é‚Æ•—‚Ì•ûŒü‚ÉƒvƒŒƒCƒ„[‚ªi‚Ş
-* ŒX‚¯‚È‚¢‚ÆÃ‚©‚É­‚µ‚¸‚Â—‚¿‚Ä‚¢‚­
-* Œ»İ‚Ì‚“x‚ğ•\¦‚·‚é
+/* ã‚ã‚
+ * é¢¨ã®ä¸­ã‚’æ•£æ­©ã™ã‚‹ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼
+* é¢¨ã®ãƒ™ã‚¯ãƒˆãƒ«ã«å‚˜ã‚’å‚¾ã‘ã‚‹ã¨é¢¨ã®æ–¹å‘ã«ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒé€²ã‚€
+* å‚¾ã‘ãªã„ã¨é™ã‹ã«å°‘ã—ãšã¤è½ã¡ã¦ã„ã
+* ç¾åœ¨ã®é«˜åº¦ã‚’è¡¨ç¤ºã™ã‚‹
 */
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private GameObject testCube;
-
-    // ‰¼UI
-    [SerializeField] private TextMeshProUGUI heightText;
-
-    // ‰E‚ÌƒRƒ“ƒgƒ[ƒ‰[‚ÌTransform
+    // å³ã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®Transform
     [SerializeField] private Transform rightControllerTransform;
 
-    // Player‚ÌRigidbody
-    private Rigidbody playerRigidbody;
-
-    // —‚¿‚Ä‚¢‚­‘¬“x
+    // è½ã¡ã¦ã„ãé€Ÿåº¦
     [SerializeField] private Vector3 gravityDirection;
 
-    // ¡‚¢‚éƒ`ƒFƒbƒNƒ|ƒCƒ“ƒg
+    // ä»Šã„ã‚‹ãƒã‚§ãƒƒã‚¯ãƒã‚¤ãƒ³ãƒˆ
     private int currentCheckPointIndex = 0;
 
-    [SerializeField] private WindController windController;
+    [SerializeField] private WindManager windController;
 
     // Start is called before the first frame update
     private void Start()
     {
-        heightText.text = this.transform.position.y.ToString();
-        playerRigidbody = this.GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     private void Update()
     {
-        heightText.text = this.transform.position.y.ToString();
-        // ƒRƒ“ƒgƒ[ƒ‰[‚ÌŠp“x‚ğæ“¾
+        /*
+        // ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®è§’åº¦ã‚’å–å¾—
         Quaternion rightControllerRotation = rightControllerTransform.rotation;
 
         Vector3 rightControllerTilt = (rightControllerRotation * Vector3.forward).normalized;
-        //Debug.Log("‰ñ“]" + rightControllerRotation.eulerAngles);
-        Debug.Log("ŒX‚«" + rightControllerTilt);
+        //Debug.Log("å›è»¢" + rightControllerRotation.eulerAngles);
+        Debug.Log("å‚¾ã" + rightControllerTilt);
         Debug.DrawLine(new Vector3(0, 15, 2), new Vector3(0, 15, 2) + rightControllerTilt * 3, Color.red);
         bool existNextCheckPoint = windController.currentWindDirection(currentCheckPointIndex, this.transform);
         float similarity;
@@ -59,21 +50,22 @@ public class PlayerController : MonoBehaviour
         {
             similarity = -1;
         }
-        // —Ş—“x‚ª0.7‚æ‚è‚¨‚¨‚«‚¢‚Æ‚«
+        // é¡ä¼¼åº¦ãŒ0.7ã‚ˆã‚ŠãŠãŠãã„ã¨ã
         Debug.Log(similarity);
         if (similarity >= 0.7)
         {
-            //ƒ`ƒFƒbƒNƒ|ƒCƒ“ƒg‚ÉŒü‚©‚Á‚Ä•—‚ª‚­
+            //ãƒã‚§ãƒƒã‚¯ãƒã‚¤ãƒ³ãƒˆã«å‘ã‹ã£ã¦é¢¨ãŒå¹ã
             Vector3 currentWind = windController.windDirection;
             playerRigidbody.velocity = currentWind;
         }
-        // —Ş—‚µ‚Ä‚¢‚È‚¯‚ê‚Î
+        // é¡ä¼¼ã—ã¦ã„ãªã‘ã‚Œã°
         else
         {
-            // ‚¨‚¿‚Ä‚¢‚­
+            // ãŠã¡ã¦ã„ã
             playerRigidbody.velocity = gravityDirection;
         }
         //Debug.Log(rightControllerTransform.position);
+        */
     }
 
     private void OnTriggerEnter(Collider other)
