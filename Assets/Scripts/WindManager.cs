@@ -95,7 +95,7 @@ public class WindManager : MonoBehaviour
         // 右コントローラーの傾き
         // Quaternion rightControllerRotation = rightControllerTransform.rotation;
         Quaternion rightControllerRotation = kasaVector;
-        
+
         // 右コントローラーの傾きをベクトルにする
         //rightControllerTilt = (rightControllerRotation * Vector3.forward).normalized;
         rightControllerTilt = kasa_Port.transform.up;
