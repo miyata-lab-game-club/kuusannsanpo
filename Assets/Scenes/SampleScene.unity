@@ -714,12 +714,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5790cd01094f70440b169d2f35ba5902, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  s1: COM11
-  s2: COM13
-  s3: COM14
-  s4: COM8
-  nf: COM5
-  kasa: COM4
+  lf_port: COM11
+  RF_Port: COM13
+  RB_Port: COM14
+  LB_Port: COM8
+  nf_Port: COM5
+  kasa_Port: COM4
   baudRate: 115200
 --- !u!114 &340929203
 MonoBehaviour:

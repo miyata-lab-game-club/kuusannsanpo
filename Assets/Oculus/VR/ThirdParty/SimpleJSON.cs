@@ -1099,6 +1099,7 @@ namespace OVRSimpleJSON // SimpleJSON
             JSONNumber rf_port = obj as JSONNumber;
             if (rf_port != null)
                 return m_Data == rf_port.m_Data;
+
             if (IsNumeric(obj))
                 return Convert.ToDouble(obj) == m_Data;
             return false;
