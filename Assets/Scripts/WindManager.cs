@@ -99,7 +99,7 @@ public class WindManager : MonoBehaviour
         // 右コントローラーの傾きをベクトルにする
         //rightControllerTilt = (rightControllerRotation * Vector3.forward).normalized;
         rightControllerTilt = kasa_Port.transform.up;
-        Debug.Log(rightControllerTilt);
+        //Debug.Log(rightControllerTilt);
         // xz平面に戻す
         rightControllerTilt.y = 0;
 
@@ -113,7 +113,7 @@ public class WindManager : MonoBehaviour
             SetActiveWindDirection(currentWindIndex);
         }
 
-        Debug.Log(ReceiveFromEsp32.buttonState);
+        //Debug.Log(ReceiveFromEsp32.buttonState);
         //スイッチ押しているなら加速
         if (ReceiveFromEsp32.buttonState == 'b' && !boost)
         {

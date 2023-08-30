@@ -701,6 +701,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotateObject: {fileID: 1105442574}
+  buttonState: 97
 --- !u!114 &340929202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1042,6 +1043,7 @@ MonoBehaviour:
   upHeight: 20
   startUpHeight: 5
   windCicleTime: 6
+  ReceiveFromEsp32: {fileID: 340929201}
   currentWindIndex: 0
   windDirection:
   - {x: 0, y: 1, z: 0}
@@ -1066,6 +1068,7 @@ MonoBehaviour:
   heightText: {fileID: 1143020563}
   timerText: {fileID: 1632930187}
   similarityText: {fileID: 1943133071}
+  kasa_Port: {fileID: 1105442574}
 --- !u!1 &583077287
 GameObject:
   m_ObjectHideFlags: 0
