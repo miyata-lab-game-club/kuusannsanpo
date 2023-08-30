@@ -55,6 +55,8 @@ public class WindManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI similarityText;
 
+    public GameObject kasa_Port;
+    Quaternion kasaVector;
 
     private void Start()
     {
@@ -74,6 +76,8 @@ public class WindManager : MonoBehaviour
 
     private void Update()
     {
+        kasaVector = kasa_Port.transform.rotation;
+
         // 引っ張る強さによってスピードが変わる
         if (pullPower == 3)
         {
@@ -89,9 +93,13 @@ public class WindManager : MonoBehaviour
         }
         //player.transform.forward = centerEyeAnchor.forward;
         // 右コントローラーの傾き
-        Quaternion rightControllerRotation = rightControllerTransform.rotation;
+        // Quaternion rightControllerRotation = rightControllerTransform.rotation;
+        Quaternion rightControllerRotation = kasaVector;
+
         // 右コントローラーの傾きをベクトルにする
-        rightControllerTilt = (rightControllerRotation * Vector3.forward).normalized;
+        //rightControllerTilt = (rightControllerRotation * Vector3.forward).normalized;
+        rightControllerTilt = kasa_Port.transform.up;
+        Debug.Log(rightControllerTilt);
         // xz平面に戻す
         rightControllerTilt.y = 0;
 
@@ -111,12 +119,10 @@ public class WindManager : MonoBehaviour
         {
             Debug.Log("加速");
             boost = true;
-            timer = 2;
+            timer = 0;
             twiceBoost = currentWindFromController();
             SetActiveWindDirection(currentWindIndex);
         }
-
-
 
         Debug.DrawLine(new Vector3(-28, 9, -60), new Vector3(-28, 9, -60) + rightControllerTilt * 5, Color.red);
 
