@@ -12,17 +12,17 @@ public class SerialPortManager : MonoBehaviour
 
     [Header("Port Names")]
     [SerializeField]
-    private string s1 = "COM1";
+    private string lf_port = "COM1";
     [SerializeField]
-    private string s2 = "COM2";
+    private string rf_port = "COM2";
     [SerializeField]
-    private string s3 = "COM3";
+    private string rb_port = "COM3";
     [SerializeField]
-    private string s4 = "COM4";
+    private string lb_port = "COM4";
     [SerializeField]
-    private string nf = "COM5"; // s5をnfに変更
+    private string nf_port = "COM5"; // s5をnfに変更
     [SerializeField]
-    private string kasa = "COM6"; // s6をkasaに変更
+    private string kasa_port = "COM6"; // s6をkasaに変更
 
     public SerialPort[] serialPorts = new SerialPort[6];
     public int baudRate = 115200;
@@ -64,7 +64,7 @@ public class SerialPortManager : MonoBehaviour
 
     private void OpenAllPorts()
     {
-        string[] portNames = { s1, s2, s3, s4, nf, kasa }; // s5とs6をnfとkasaに変更
+        string[] portNames = { lf_port, rf_port, rb_port, lb_port, nf_port, kasa_port }; // s5とs6をnfとkasaに変更
         for (int i = 0; i < 6; i++)
         {
             try

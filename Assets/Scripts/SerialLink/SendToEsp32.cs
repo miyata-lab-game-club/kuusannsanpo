@@ -11,20 +11,20 @@ public class SendToEsp32 : MonoBehaviour
     public WindManager windManager;
 
     // Port４とネックファンは後で追加
-    private int PortIndex_1;
-    private int PortIndex_2;
-    private int PortIndex_3;
+    private int LF_power;
+    private int RF_power;
+    private int RB_power;
 
-    private int PortIndex_4;
+    private int LB_power;
 
     // WindManagerのup(bool)をa or b　のstringにして格納するようの変数
     private string windBoostedRise;
     //文字送る用の型
-    private string port1_DataToSend;
-    private string port2_DataToSend;
-    private string port3_DataToSend;
-    private string port4_DataToSend;
-    private string port5_DataToSend;
+    private string LF_Data;
+    private string RF_Data;
+    private string RB_Data;
+    private string LB_Data;
+    private string NF_power;
 
     private void Start()
     {
@@ -55,21 +55,21 @@ public class SendToEsp32 : MonoBehaviour
                 windBoostedRise = windManager.up ? "a" : "b";
 
                 // 力覚装置1~4s用に文字型に変換(引っ張る力と急上昇を送信)
-                port1_DataToSend = PortIndex_1.ToString() + windBoostedRise.ToString();
-                port2_DataToSend = PortIndex_2.ToString() + windBoostedRise.ToString();
-                port3_DataToSend = PortIndex_3.ToString() + windBoostedRise.ToString();
-                port4_DataToSend = PortIndex_4.ToString() + windBoostedRise.ToString();
+                LF_Data = LF_power.ToString() + windBoostedRise.ToString();
+                RF_Data = RF_power.ToString() + windBoostedRise.ToString();
+                RB_Data = RB_power.ToString() + windBoostedRise.ToString();
+                LB_Data = LB_power.ToString() + windBoostedRise.ToString();
 
                 // NeckFan(方向と急上昇を送信)
-                port5_DataToSend = windManager.currentWindIndex.ToString() + windBoostedRise.ToString();
+                NF_power = windManager.currentWindIndex.ToString() + windBoostedRise.ToString();
                 SetPortIndices();
 
                 // それぞれ送信
-                spManager.WriteToPort(0, port1_DataToSend);//s1に送信
-                spManager.WriteToPort(1, port2_DataToSend);//s2に送信
-                spManager.WriteToPort(2, port3_DataToSend);//s3に送信
-                spManager.WriteToPort(3, port4_DataToSend);//s4に送信
-                spManager.WriteToPort(4, port5_DataToSend);//Neckfanに送信
+                spManager.WriteToPort(0, LF_Data);//s1に送信
+                spManager.WriteToPort(1, RF_Data);//s2に送信
+                spManager.WriteToPort(2, RB_Data);//s3に送信
+                spManager.WriteToPort(3, LB_Data);//s4に送信
+                spManager.WriteToPort(4, NF_power);//Neckfanに送信
 
             // spManager.Read(5)の結果をデバッグログで表示
             }
@@ -87,34 +87,34 @@ public class SendToEsp32 : MonoBehaviour
        
     }
 
-//caseの中でpullpowerを考慮してそれぞれ(s1~4)の力を決める
+//caseの中でpullpowerを考慮してそれぞれ(lf_port~4)の力を決める
     private void SetPortIndices()
     {
         switch (windManager.currentWindIndex)
         {
             case 1:
-                PortIndex_1 = 0; PortIndex_2 = 1; PortIndex_3 = 0; PortIndex_4 = 0;
+                LF_power = 0; RF_power = 1; RB_power = 0; LB_power = 0;
                 break;
             case 2:
-                PortIndex_1 = 1; PortIndex_2 = 1; PortIndex_3 = 2; PortIndex_4 = 0;
+                LF_power = 1; RF_power = 1; RB_power = 2; LB_power = 0;
                 break;
             case 3:
-                PortIndex_1 = 1; PortIndex_2 = 1; PortIndex_3 = 0; PortIndex_4 = 0;
+                LF_power = 1; RF_power = 1; RB_power = 0; LB_power = 0;
                 break;
             case 4:
-                PortIndex_1 = 0; PortIndex_2 = 1; PortIndex_3 = 0; PortIndex_4 = 0;
+                LF_power = 0; RF_power = 1; RB_power = 0; LB_power = 0;
                 break;
             case 5:
-                PortIndex_1 = 0; PortIndex_2 = 0; PortIndex_3 = 0; PortIndex_4 = 0;
+                LF_power = 0; RF_power = 0; RB_power = 0; LB_power = 0;
                 break;
             case 6:
-                PortIndex_1 = 1; PortIndex_2 = 1; PortIndex_3 = 1; PortIndex_4 = 0;
+                LF_power = 1; RF_power = 1; RB_power = 1; LB_power = 0;
                 break;
             case 7:
-                PortIndex_1 = 1; PortIndex_2 = 1; PortIndex_3 = 0; PortIndex_4 = 0;
+                LF_power = 1; RF_power = 1; RB_power = 0; LB_power = 0;
                 break;
             case 8:
-                PortIndex_1 = 0; PortIndex_2 = 1; PortIndex_3 = 1; PortIndex_4 = 0;
+                LF_power = 0; RF_power = 1; RB_power = 1; LB_power = 0;
                 break;
         }
     }
