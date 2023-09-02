@@ -7,6 +7,9 @@ using UnityEngine.XR;
 
 public class WindManager : MonoBehaviour
 {
+    [SerializeField] SendToEsp32 sendToesp32;
+    private SerialPortManager spManager; 
+    [SerializeField] WindMovement windMovement;
     [SerializeField] private GameObject player;
     [SerializeField] private float speed;
 
@@ -22,6 +25,8 @@ public class WindManager : MonoBehaviour
 
     // 落ちていく速度
     [SerializeField] private Vector3 gravityDirection;
+    // 上昇する速度
+    [SerializeField] private int upPower = 5;
 
     [SerializeField] private Transform centerEyeAnchor;
     [SerializeField] private Transform rightControllerTransform;
@@ -32,16 +37,17 @@ public class WindManager : MonoBehaviour
     private float timer;
     private Vector3 currentWind;
 
+     [SerializeField] GameObject windPivot;
+
 
     [SerializeField] private ReceiveFromEsp32 ReceiveFromEsp32;// SerialPortManager の参照を持つ変数
     public int currentWindIndex = 0;
+    // ひとつ前の風の方向
+    private int previousWindIndex = 1;
+
 
     //　上、北、北東、東、南東、南、南西、西、北西
-    public Vector3[] windDirection = new Vector3[]
-    {new Vector3(0,1,0), new Vector3(0, 1, 1),new Vector3(1, 1, 1),new Vector3(1, 1, 0),
-     new Vector3(1,1,-1), new Vector3(0, 1, -1),new Vector3(-1, 1, -1),new Vector3(-1, 1, 0),
-     new Vector3(-1, 1, 1)
-    };
+    public Vector3[] windDirection = Define.windDirection;
 
     public Vector3[] windXZDirection = new Vector3[]
 {new Vector3(0,0,0), new Vector3(0, 0, 1),new Vector3(1, 0, 1),new Vector3(1, 0, 0),
@@ -69,6 +75,18 @@ public class WindManager : MonoBehaviour
         timer = 0;
         timerText.text = timer.ToString();
         currentWind = currentWindDirection();
+        SetWindEffectDirection(currentWindIndex);
+        spManager = SerialPortManager.Instance;
+
+        if (spManager == null)
+        {
+            Debug.LogError("SerialPortManager instance not found!");
+            return;
+        }
+        
+        {
+            sendToesp32.StartSendData(spManager,this);
+        }
 
     }
 
@@ -129,13 +147,16 @@ public class WindManager : MonoBehaviour
         timerText.text = timer.ToString();
     }
 
+    bool upOnce = false;
     private void FixedUpdate()
     {
+        Debug.Log(rightControllerTilt);
         if (boost != true)
         {
             if (player.transform.position.y > startUpHeight && !up)
-            {
+            {                  
                 timer += Time.deltaTime;
+                //Debug.Log("timer:"+timer+"windCicleTime:"+windCicleTime);
                 if (timer > windCicleTime)
                 {
                     currentWind = currentWindDirection();
@@ -147,8 +168,10 @@ public class WindManager : MonoBehaviour
                 // 類似度が0.7よりおおきいとき
                 //Debug.Log(similarity);
                 similarityText.text = similarity.ToString();
+                Debug.Log("方向を判定して進む");
                 if (similarity >= 0.8)
                 {
+                    Debug.Log("類似している" +currentWindIndex);
                     playerRigidbody.velocity = currentWind * speed;
                 }
                 // 類似していなければ
@@ -167,13 +190,24 @@ public class WindManager : MonoBehaviour
             if (player.transform.position.y > upHeight && up)
             {
                 up = false;
+                upOnce = false;
             }
             // 上昇中
             if (up)
             {
-                playerRigidbody.AddForce(windDirection[0], ForceMode.Impulse);
-                //playerRigidbody.velocity = windDirection[0];
-                SetActiveWindDirection(0);
+                currentWindIndex = 0;
+                playerRigidbody.velocity = windDirection[currentWindIndex]*upPower;
+                SetActiveWindDirection(currentWindIndex);
+                SetWindEffectDirection(currentWindIndex);
+                if(upOnce == false){
+                    currentWindIndex = 0;
+                   // Debug.Log("力を加える");
+                    //playerRigidbody.AddForce(windDirection[0], ForceMode.Impulse);
+                    //playerRigidbody.velocity = windDirection[0];
+                            // 風向きを音とエフェクトで提示
+                    windMovement.WindMove(currentWindIndex);
+                    upOnce = true;
+                }
             }
         }
         else
@@ -199,6 +233,7 @@ public class WindManager : MonoBehaviour
         }
     }
 
+    // コントローラーの向いている方向に風を吹かせる 
     private bool currentWindFromController()
     {
         float similarity;
@@ -217,7 +252,9 @@ public class WindManager : MonoBehaviour
                 currentWindIndex = i;
             }
         }
-
+    
+        // 風向きを音とエフェクトで提示
+        windMovement.WindMove(currentWindIndex);
         similarityText.text = maxSimilarity.ToString();
         if (tmpCurrentWindIndex == currentWindIndex)
         {
@@ -229,10 +266,30 @@ public class WindManager : MonoBehaviour
         }
     }
 
+    // 現在吹いている風を決める
     public Vector3 currentWindDirection()
     {
-        currentWindIndex = Random.Range(1, 9);
+        // currentWindIndex = Random.Range(1, 9);
+
+        //各斜めの風の方向
+        int[] choices = { 2, 4, 6, 8 };
+        int rand = choices[Random.Range(0,choices.Length)];
+        // 前吹いた風の向きと同じなら
+        while(rand == previousWindIndex){
+            // もう一度振りなおす
+            rand = choices[Random.Range(0,choices.Length)];
+        }
+        Debug.Log(rand);
+        // 現在の風を更新
+        currentWindIndex = rand;
+        // ひとつ前の風を更新
+        previousWindIndex = currentWindIndex;
+        // UIの表示
         SetActiveWindDirection(currentWindIndex);
+        // 風向きを音とエフェクトで提示
+        windMovement.WindMove(currentWindIndex);
+        //風のエフェクトの向き設定
+        SetWindEffectDirection(currentWindIndex);
         return windDirection[currentWindIndex].normalized;
     }
 
@@ -243,5 +300,49 @@ public class WindManager : MonoBehaviour
             directionUIs[i].SetActive(false);
         }
         directionUIs[currentWindIndex].SetActive(true);
+    }
+
+     private void SetWindEffectDirection(int windindex)
+    {
+        Quaternion pivotRot;
+        switch (currentWindIndex)
+        {
+            case 0:
+                pivotRot = Quaternion.Euler(-90, 0, 0);
+                windPivot.transform.rotation = pivotRot;
+                break;
+            case 1:
+                pivotRot = Quaternion.Euler(0, 0, 0);
+                windPivot.transform.rotation = pivotRot;
+                break;
+            case 2:
+                pivotRot = Quaternion.Euler(0, 45, 0);
+                windPivot.transform.rotation = pivotRot;
+                break;
+            case 3:
+                pivotRot = Quaternion.Euler(0, 90, 0);
+                windPivot.transform.rotation = pivotRot;
+                break;
+            case 4:
+                pivotRot = Quaternion.Euler(0, 135, 0);
+                windPivot.transform.rotation = pivotRot;
+                break;
+            case 5:
+                pivotRot = Quaternion.Euler(0, 180, 0);
+                windPivot.transform.rotation = pivotRot;
+                break;
+            case 6:
+                pivotRot = Quaternion.Euler(0, 225, 0);
+                windPivot.transform.rotation = pivotRot;
+                break;
+            case 7:
+                pivotRot = Quaternion.Euler(0, 270, 0);
+                windPivot.transform.rotation = pivotRot;
+                break;
+            case 8:
+                pivotRot = Quaternion.Euler(0, 315, 0);
+                windPivot.transform.rotation = pivotRot;
+                break;
+        }
     }
 }
