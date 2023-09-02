@@ -3,12 +3,13 @@ using System.IO.Ports;
 using UnityEngine;
 using System.Collections;
 
+
 public class SendToEsp32 : MonoBehaviour
 {
-    private SerialPortManager spManager; // SerialPortManager の参照を持つ変数
+    //private SerialPortManager spManager; // SerialPortManager の参照を持つ変数
 
     // WindManagerの参照
-    public WindManager windManager;
+    //public WindManager windManager;
 
     // Port４とネックファンは後で追加
     private int LF_power;
@@ -16,6 +17,12 @@ public class SendToEsp32 : MonoBehaviour
     private int RB_power;
     private int LB_power;
 
+    // 全開
+    const int FULL＿OPEN = 3;
+    // 中くらい
+    const int HALF＿OPEN = 2;
+    // 閉じる
+    const int CLOSE = 1;
     // WindManagerのup(bool)をa or b　のstringにして格納するようの変数
     private string windBoostedRise;
     //文字送る用の型
@@ -25,26 +32,32 @@ public class SendToEsp32 : MonoBehaviour
     private string LB_Data;
     private string NF_Data;
 
+
     private void Start()
     {
-        spManager = SerialPortManager.Instance;
+        // spManager = SerialPortManager.Instance;
 
-        if (spManager == null)
-        {
-            Debug.LogError("SerialPortManager instance not found!");
-            return;
-        }
+        // if (spManager == null)
+        // {
+        //     Debug.LogError("SerialPortManager instance not found!");
+        //     return;
+        // }
 
-        if (windManager == null)
-        {
-            Debug.LogError("WindManager reference is not set on SendToEsp32.");
-            return;
-        }
-        {
-            StartCoroutine(SendDataCoroutine());
-        }
+        // if (windManager == null)
+        // {
+        //     Debug.LogError("WindManager reference is not set on SendToEsp32.");
+        //     return;
+        // }
+        
+        // {
+        //     StartCoroutine(SendDataCoroutine());
+        // }
     }
-    private IEnumerator SendDataCoroutine()
+
+    public void StartSendData(SerialPortManager spManager,WindManager windManager){
+        StartCoroutine(SendDataCoroutine(spManager,windManager));
+    }
+    private IEnumerator SendDataCoroutine(SerialPortManager spManager,WindManager windManager)
     {
         while (true)  // 無限ループで送信処理を繰り返す
         {
@@ -61,7 +74,7 @@ public class SendToEsp32 : MonoBehaviour
 
                 // NeckFan(方向と急上昇を送信)
                 NF_Data = windManager.currentWindIndex.ToString() + windBoostedRise.ToString();
-                SetPortIndices();
+                SetPortIndices(windManager);
 
                 // それぞれ送信
                 spManager.WriteToPort(0, LF_Data);//LFに送信
@@ -70,15 +83,15 @@ public class SendToEsp32 : MonoBehaviour
                 spManager.WriteToPort(3, LB_Data);//LBに送信
                 spManager.WriteToPort(4, NF_Data);//Neckfanに送信
 
+
             // spManager.Read(5)の結果をデバッグログで表示
             }
             catch (Exception ex)
             {
                 Debug.LogError("Could not send to ESP32: " + ex.Message);
             }
-
-            yield return new WaitForSeconds(0.5f);  // 0.5秒待機
-            Debug.Log(LF_Data);
+            //Debug.Log("RB_Data: " + RB_Data);
+            yield return new WaitForSeconds(0.1f);  // 0.5秒待機
         }
     }
 
@@ -87,38 +100,37 @@ public class SendToEsp32 : MonoBehaviour
        
     }
 
-//caseの中でpullpowerを考慮してそれぞれ(lf_port~4)の力を決める
-    private void SetPortIndices()
+//caseの中でpullpowerを考慮してそれぞれ(LF_port~4)の力を決める
+    private void SetPortIndices(WindManager windManager)
     {
         switch (windManager.currentWindIndex)
         {
-
             /*
-            // 1が下のモータ閉める、2が下のモータ開いて上が半分開く。3が下のモータ開いて上のモータ全部閉める
+            // 1が下のモータ閉める、2が半分、3が下のモータ開いて上がく。
             */
             case 1://北(前)
-                LF_power = 3; RF_power = 3; RB_power = 1; LB_power = 1;
+                LF_power = FULL＿OPEN; RF_power = FULL＿OPEN; RB_power = CLOSE; LB_power = CLOSE;
                 break;
             case 2://北東(右前)
-                LF_power = 3; RF_power = 2; RB_power = 1; LB_power = 2;
+                LF_power = CLOSE; RF_power = FULL＿OPEN; RB_power = CLOSE; LB_power = CLOSE;
                 break;
             case 3://東(右)
-                LF_power = 1; RF_power = 3; RB_power = 3; LB_power = 1;
+                LF_power = FULL＿OPEN; RF_power = CLOSE; RB_power = CLOSE; LB_power = CLOSE;
                 break;
             case 4://南東(右後)
-                LF_power = 1; RF_power = 2; RB_power = 3; LB_power = 2;
+                LF_power = CLOSE; RF_power = CLOSE; RB_power = FULL＿OPEN; LB_power = CLOSE;
                 break;
             case 5://南(後)
-                LF_power = 1; RF_power = 1; RB_power = 3; LB_power = 3;
+                LF_power = CLOSE; RF_power = CLOSE; RB_power = FULL＿OPEN; LB_power = FULL＿OPEN;
                 break;
             case 6://南西(左後)
-                LF_power = 2; RF_power = 1; RB_power = 2; LB_power = 3;
+                LF_power = FULL＿OPEN; RF_power = CLOSE; RB_power = CLOSE; LB_power = FULL＿OPEN;
                 break;
             case 7://西(左)
-                LF_power = 3; RF_power = 1; RB_power = 1; LB_power = 3;
+                LF_power = FULL＿OPEN; RF_power = CLOSE; RB_power = CLOSE; LB_power = FULL＿OPEN;
                 break;
             case 8://北西(左前)
-                LF_power = 3; RF_power = 2; RB_power = 2; LB_power = 1;
+                LF_power = FULL＿OPEN; RF_power = CLOSE; RB_power = CLOSE; LB_power = CLOSE;
                 break;
         }
     }

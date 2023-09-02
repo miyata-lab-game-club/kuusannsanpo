@@ -12,8 +12,9 @@ public class SerialPortManager : MonoBehaviour
 
     [Header("Port Names")]
     [SerializeField]
+
     //
-    private string lf_port = "COM1";
+    private string LF_port = "COM1";
     [SerializeField]
     private string RF_Port = "COM2";
     [SerializeField]
@@ -21,7 +22,7 @@ public class SerialPortManager : MonoBehaviour
     [SerializeField]
     private string LB_Port = "COM4";
     [SerializeField]
-    private string nf_Port = "COM5"; // s5をnfに変更
+    private string NF_Port = "COM5"; // s5をnfに変更
     [SerializeField]
     private string kasa_Port = "COM6"; // s6をkasaに変更
 
@@ -65,7 +66,8 @@ public class SerialPortManager : MonoBehaviour
 
     private void OpenAllPorts()
     {
-        string[] portNames = { lf_port, RF_Port, RB_Port, LB_Port, nf_Port, kasa_Port }; // s5とs6をnfとkasaに変更
+
+        string[] portNames = { LF_port, RF_Port, RB_Port, LB_Port, NF_Port, kasa_Port }; // s5とs6をnfとkasaに変更
         for (int i = 0; i < 6; i++)
         {
             try
